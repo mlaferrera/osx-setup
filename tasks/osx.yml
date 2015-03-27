@@ -239,8 +239,8 @@
     - /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
     - /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
 
-- name: Show item info to the right of the icons on the desktop
-  shell: /usr/libexec/PlistBuddy -c "Set DesktopViewSettings:IconViewSettings:labelOnBottom false" ~/Library/Preferences/com.apple.finder.plist
+# - name: Show item info to the right of the icons on the desktop
+#   shell: /usr/libexec/PlistBuddy -c "Set DesktopViewSettings:IconViewSettings:labelOnBottom false" ~/Library/Preferences/com.apple.finder.plist
 
 - name: Enable snap-to-grid for icons on the desktop and in other icon views
   shell: "{{ item }}"
@@ -287,8 +287,7 @@
 - name: Enable highlight hover effect for the grid view of a stack (Dock)
   shell: defaults write com.apple.dock mouse-over-hilite-stack -bool true
 
-
-- name: Set the icon size of Dock items to 36 pixels
+- name: Set the icon size of Dock items to 45 pixels
   shell: defaults write com.apple.dock tilesize -int 45
 
 - name: Minimize windows into their application’s icon
@@ -305,7 +304,7 @@
 - name: Remove the auto-hiding Dock delay
   shell: defaults write com.apple.dock autohide -bool true
 
-- name: Enable maginifcation
+- name: Enable magnification
   shell: defaults write com.apple.dock magnification -bool true
 
 - name: Magnification large size
