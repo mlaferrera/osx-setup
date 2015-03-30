@@ -40,6 +40,7 @@
       # - karabiner
 
     homebrew_installed_apps:
+      - caskroom/cask/brew-cask
       - zsh
       - zsh-completions
       - wget
