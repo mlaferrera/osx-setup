@@ -19,7 +19,6 @@
       - google-chrome
       - dash
       - evernote
-      - slate
       - spectacle
       - recordit
       - iterm2
@@ -36,7 +35,8 @@
       - little-snitch
       - microsoft-office
       - sourcetree
-      # - vmware-fusion
+      - vmware-fusion
+      # - slate
       # - karabiner
 
     homebrew_installed_apps:
