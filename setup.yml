@@ -36,6 +36,8 @@
       - microsoft-office
       - sourcetree
       - vmware-fusion
+      - stellarium
+      - torbrowser
       # - slate
       # - karabiner
 
