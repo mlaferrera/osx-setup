@@ -25,6 +25,7 @@
       - quicksilver
       - vagrant
       - virtualbox
+      - dropbox
       - osxfuse
       - 0xed
       - 1password
@@ -33,13 +34,12 @@
       - slack
       - viscosity
       - little-snitch
-      - microsoft-office
       - sourcetree
       - vmware-fusion
       - stellarium
       - torbrowser
-      # - slate
-      # - karabiner
+      - wunderlist
+      #- microsoft-office
 
     homebrew_installed_apps:
       - caskroom/cask/brew-cask
@@ -60,7 +60,6 @@
       - automake
       - gcc
       - binutils
-      - syncthing
 
   tasks:
       - include: tasks/dotfiles.yml tags=dotfiles
