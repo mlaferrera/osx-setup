@@ -29,7 +29,6 @@
       - osxfuse
       - 0xed
       - 1password
-      - thunderbird
       - adium
       - slack
       - viscosity
@@ -40,6 +39,7 @@
       - torbrowser
       - wunderlist
       #- microsoft-office
+      #- thunderbird
 
     homebrew_installed_apps:
       - caskroom/cask/brew-cask
