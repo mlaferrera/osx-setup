@@ -38,6 +38,10 @@
       - stellarium
       - torbrowser
       - wunderlist
+      - yubico-authenticator
+      - yubikey-personalization-gui
+      - dockertoolbox
+      - yara
       #- microsoft-office
       #- thunderbird
 
