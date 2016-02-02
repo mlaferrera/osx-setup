@@ -385,3 +385,9 @@
 - name: Disable continuous spell checking
   shell: defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "continuousSpellCheckingEnabled" -bool false
 
+###############################################################################
+# LaunchAgents                                                                #
+###############################################################################
+
+- name: Disable gamed
+  shell: launchctl unload -w /System/Library/LaunchAgents/com.apple.gamed.plist
