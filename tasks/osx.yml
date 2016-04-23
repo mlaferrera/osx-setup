@@ -35,14 +35,8 @@
     - defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
     - defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
-- name: Save to disk (not to iCloud) by default
-  shell: defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
-
 - name: Automatically quit printer app once the print jobs complete
   shell: defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
-
-- name: Disable the “Are you sure you want to open this application?” dialog
-  shell: defaults write com.apple.LaunchServices LSQuarantine -bool false
 
 - name: Display ASCII control characters using caret notation in standard text views
   shell: defaults write NSGlobalDomain NSTextShowsControlCharacters -bool true
@@ -53,14 +47,12 @@
 - name: Disable automatic termination of inactive apps
   shell: defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
 
-# - name: Disable the crash reporter
-#   shell: defaults write com.apple.CrashReporter DialogType -string "none"
-
 - name: Set Help Viewer windows to non-floating mode
   shell: defaults write com.apple.helpviewer DevMode -bool true
 
 - name: Reveal IP address, hostname, OS version, etc. when clicking the clock in the login window
-  shell: sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
+  shell: defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
+  become: yes
 
 - name: Restart automatically if the computer freezes
   shell: systemsetup -setrestartfreeze on
@@ -139,12 +131,6 @@
 # Screen                                                                      #
 ###############################################################################
 
-- name: Require password immediately after sleep or screen saver begins
-  shell: "{{ item }}"
-  with_items:
-    - defaults write com.apple.screensaver askForPassword -int 1
-    - defaults write com.apple.screensaver askForPasswordDelay -int 0
-
 - name: Save screenshots to the desktop
   shell: defaults write com.apple.screencapture location -string "${HOME}/Desktop"
 
@@ -158,7 +144,8 @@
   shell: defaults write NSGlobalDomain AppleFontSmoothing -int 2
 
 - name: Enable HiDPI display modes (requires restart)
-  shell: sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
+  shell: defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
+  become: yes
 
 ###############################################################################
 # Finder                                                                      #
@@ -214,9 +201,6 @@
 
 - name: Remove the spring loading delay for directories
   shell: defaults write NSGlobalDomain com.apple.springing.delay -float 0
-
-- name: Avoid creating .DS_Store files on network volumes
-  shell: defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 
 - name: Disable disk image verification
   shell: "{{ item }}"
@@ -337,9 +321,6 @@
     #- defaults write com.apple.dock wvous-bl-corner -int 5
     #- defaults write com.apple.dock wvous-bl-modifier -int 0
 
-- name: Disable local Time Machine backups
-  shell: sudo tmutil disablelocal
-
 ###############################################################################
 # Time Machine, TextEdit and Disk Utility                                     #
 ###############################################################################
@@ -386,8 +367,98 @@
   shell: defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "continuousSpellCheckingEnabled" -bool false
 
 ###############################################################################
-# LaunchAgents                                                                #
+# Security                                                                    #
 ###############################################################################
 
-- name: Disable gamed
-  shell: launchctl unload -w /System/Library/LaunchAgents/com.apple.gamed.plist
+- name: Disable Automatically allow signed software to receive incoming connections
+  shell: defaults write /Library/Preferences/com.apple.alf allowsignedenabled -bool false
+  become: yes
+
+- name: Disable captive portal
+  shell: defaults write /Library/Preferences/SystemConfiguration/com.apple.captive.control Active -bool false
+  become: yes
+
+- name: Fix CVE-2016-0777 (SSH UseRoaming)
+  lineinfile: dest=/etc/ssh/ssh_config state=present regexp=^UseRoaming line="UseRoaming no"
+  become: yes
+
+- name: Avoid creating .DS_Store files on network volumes
+  shell: defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+
+- name: Disable the “Are you sure you want to open this application?” dialog
+  shell: defaults write com.apple.LaunchServices LSQuarantine -bool false
+
+- name: Disable the crash reporter
+  shell: defaults write com.apple.CrashReporter DialogType -string "none"
+
+- name: Save to disk (not to iCloud) by default
+  shell: defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
+
+- name: Require password immediately after sleep or screen saver begins
+  shell: "{{ item }}"
+  with_items:
+    - defaults write com.apple.screensaver askForPassword -int 1
+    - defaults write com.apple.screensaver askForPasswordDelay -int 0
+
+- name: Disable local Time Machine backups
+  shell: tmutil disablelocal
+  become: yes
+
+- name: Prevent Time Machine backup to new disks
+  shell: defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
+
+- name: Disabling Services
+  shell: launchctl unload -w {{ item }}
+  with_items:
+    - /System/Library/LaunchAgents/com.apple.gamed.plist
+    - /System/Library/LaunchAgents/com.apple.icloud.findmydeviced.findmydevice-user-agent.plist
+    - /System/Library/LaunchAgents/com.apple.Maps.pushdaemon.plist
+    - /System/Library/LaunchDaemons/com.apple.apsd.plist
+    - /System/Library/LaunchDaemons/com.apple.findmymac.plist
+    - /System/Library/LaunchDaemons/com.apple.findmymacmessenger.plist
+    - /System/Library/LaunchAgents/com.apple.metadata.SpotlightNetHelper.plist
+
+- name: Disable Blueooth
+  shell: defaults write /Library/Preferences/com.apple.Bluetooth.plist ControllerPowerState -bool FALSE
+  become: yes
+
+- name: Force eviction of Filevault Keys from memory
+  shell: pmset -a destroyfvkeyonstandby 1 hibernatemode 25
+  become: yes
+
+- name: Disable Power Nap
+  shell: pmset -a darkwakes 0
+  become: yes
+
+- name: Disable Wake on Network
+  shell: pmset -a womp 0
+  become: yes
+
+- name: Display Sleep after 60 minutes
+  shell: pmset displaysleep 60
+  become: yes
+
+- name: Disable force click and haptic feedback
+  shell: "{{ item }}"
+  with_items:
+    - defaults write com.apple.AppleMultitouchTrackpad ForceSuppressed -bool true
+    - defaults write com.apple.AppleMultitouchTrackpad ActuateDetents -bool false
+    - defaults write NSGlobalDomain com.apple.trackpad.forceClick -bool false
+  ignore_errors: true
+
+###############################################################################
+# Firewall                                                                    #
+###############################################################################
+
+- name: Enable Application Layer Firewall
+  shell: defaults write /Library/Preferences/com.apple.alf globalstate -bool true
+  become: yes
+
+- name: Enable Firewall Stealth Mode
+  shell: defaults write /Library/Preferences/com.apple.alf stealthenabled -bool true
+  become: yes
+
+- name: Enable Firewall Logging
+  shell: defaults write /Library/Preferences/com.apple.alf loggingenabled -bool true
+  become: yes
+

@@ -33,7 +33,6 @@
       - slack
       - viscosity
       - little-snitch
-      - sourcetree
       - vmware-fusion
       - stellarium
       - torbrowser
@@ -42,8 +41,8 @@
       - yubikey-personalization-gui
       - dockertoolbox
       - yara
-      #- microsoft-office
-      #- thunderbird
+      - thunderbird
+      - microsoft-office
 
     homebrew_installed_apps:
       - caskroom/cask/brew-cask
@@ -64,6 +63,7 @@
       - automake
       - gcc
       - binutils
+      - openssl
 
   tasks:
       - include: tasks/dotfiles.yml tags=dotfiles

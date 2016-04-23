@@ -5,7 +5,7 @@
     group: admin
     mode: 0775
     state: directory
-  sudo: yes
+  become: yes
 
 - name: Ensure proper permissions on /usr/local dirs.
   file:
@@ -15,7 +15,7 @@
   with_items:
     - "/usr/local"
     - "/usr/local/bin"
-  sudo: yes
+  become: yes
 
 - name: Ensure homebrew is installed.
   git:
@@ -24,7 +24,7 @@
     dest: "{{ homebrew_install_path }}"
     update: no
     accept_hostkey: yes
-  sudo: yes
+  become: yes
 
 - name: Check if homebrew binary is already in place.
   stat: path=/usr/local/bin/brew
@@ -36,7 +36,7 @@
     dest: /usr/local/bin/brew
     state: link
   when: homebrew_binary.stat.exists == false
-  sudo: yes
+  become: yes
 
 - name: Check for installed homebrew apps
   shell: brew list | grep {{ item }}
@@ -73,3 +73,4 @@
   homebrew_cask: name={{ item }} state=installed
   with_items: homebrew_cask_apps
   when: item not in installed_casks.results | map(attribute='stdout')
+
