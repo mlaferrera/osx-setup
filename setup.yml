@@ -43,6 +43,7 @@
       - yara
       - thunderbird
       - microsoft-office
+      - handbrake
 
     homebrew_installed_apps:
       - caskroom/cask/brew-cask
@@ -64,6 +65,8 @@
       - gcc
       - binutils
       - openssl
+      - pinentry
+      - libdvdcss
 
   tasks:
       - include: tasks/dotfiles.yml tags=dotfiles
